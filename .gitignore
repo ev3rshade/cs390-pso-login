@@ -1,0 +1,7 @@
+node_modules/
+.env
+.DS_Store
+
+# Solutions - don't push to students
+server.js
+server-solution.js

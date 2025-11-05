@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Test Secure Login API</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+    }
+    
+    .container {
+      background: white;
+      padding: 40px;
+      border-radius: 20px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+      max-width: 500px;
+      width: 100%;
+    }
+    
+    h1 {
+      text-align: center;
+      color: #333;
+      margin-bottom: 10px;
+      font-size: 32px;
+    }
+    
+    .subtitle {
+      text-align: center;
+      color: #666;
+      margin-bottom: 30px;
+      font-size: 14px;
+    }
+    
+    .form-section {
+      margin-bottom: 30px;
+      padding: 25px;
+      background: #f8f9fa;
+      border-radius: 10px;
+    }
+    
+    h2 {
+      color: #667eea;
+      margin-bottom: 20px;
+      font-size: 20px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    
+    .form-group {
+      margin-bottom: 15px;
+    }
+    
+    label {
+      display: block;
+      margin-bottom: 5px;
+      color: #555;
+      font-weight: 500;
+      font-size: 14px;
+    }
+    
+    input {
+      width: 100%;
+      padding: 12px 15px;
+      border: 2px solid #e0e0e0;
+      border-radius: 8px;
+      font-size: 14px;
+      transition: all 0.3s;
+    }
+    
+    input:focus {
+      outline: none;
+      border-color: #667eea;
+      box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+    }
+    
+    button {
+      width: 100%;
+      padding: 12px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    
+    button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+    }
+    
+    button:active {
+      transform: translateY(0);
+    }
+    
+    #result {
+      margin-top: 20px;
+      padding: 15px;
+      border-radius: 8px;
+      font-family: 'Courier New', monospace;
+      font-size: 13px;
+      display: none;
+      word-wrap: break-word;
+    }
+    
+    #result.show {
+      display: block;
+    }
+    
+    #result.success {
+      background: #d4edda;
+      border: 2px solid #c3e6cb;
+      color: #155724;
+    }
+    
+    #result.error {
+      background: #f8d7da;
+      border: 2px solid #f5c6cb;
+      color: #721c24;
+    }
+    
+    .status-indicator {
+      display: inline-block;
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: #6c757d;
+      margin-right: 8px;
+      animation: pulse 2s infinite;
+    }
+    
+    .status-indicator.connected {
+      background: #28a745;
+    }
+    
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.5; }
+    }
+    
+    .info-box {
+      background: #e7f3ff;
+      border-left: 4px solid #667eea;
+      padding: 15px;
+      margin-bottom: 20px;
+      border-radius: 5px;
+      font-size: 14px;
+      color: #004085;
+    }
+    
+    .info-box strong {
+      display: block;
+      margin-bottom: 5px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>🔐 Secure Login</h1>
+    <p class="subtitle">Test your authentication API</p>
+    
+    <div class="info-box">
+      <strong>📋 Before you start:</strong>
+      Make sure your server is running on <code>http://localhost:3000</code><br>
+      Run: <code>npm start</code>
+    </div>
+    
+    <div class="form-section">
+      <h2>
+        <span class="status-indicator" id="status"></span>
+        Sign Up
+      </h2>
+      <form id="signupForm">
+        <div class="form-group">
+          <label for="signupUser">Username</label>
+          <input 
+            type="text" 
+            id="signupUser" 
+            placeholder="Enter username" 
+            required
+            autocomplete="username"
+          >
+        </div>
+        <div class="form-group">
+          <label for="signupPass">Password</label>
+          <input 
+            type="password" 
+            id="signupPass" 
+            placeholder="Enter password" 
+            required
+            autocomplete="new-password"
+          >
+        </div>
+        <button type="submit">Create Account</button>
+      </form>
+    </div>
+    
+    <div class="form-section">
+      <h2>
+        <span class="status-indicator" id="status2"></span>
+        Login
+      </h2>
+      <form id="loginForm">
+        <div class="form-group">
+          <label for="loginUser">Username</label>
+          <input 
+            type="text" 
+            id="loginUser" 
+            placeholder="Enter username" 
+            required
+            autocomplete="username"
+          >
+        </div>
+        <div class="form-group">
+          <label for="loginPass">Password</label>
+          <input 
+            type="password" 
+            id="loginPass" 
+            placeholder="Enter password" 
+            required
+            autocomplete="current-password"
+          >
+        </div>
+        <button type="submit">Sign In</button>
+      </form>
+    </div>
+    
+    <div id="result"></div>
+  </div>
+
+  <script>
+    const resultDiv = document.getElementById('result');
+    const statusIndicator = document.getElementById('status');
+    const statusIndicator2 = document.getElementById('status2');
+    
+    // Check if server is running
+    async function checkServer() {
+      try {
+        const response = await fetch('http://localhost:3000/signup', {
+          method: 'POST',
+          headers: {'Content-Type': 'application/json'},
+          body: JSON.stringify({username: '', password: ''})
+        });
+        statusIndicator.classList.add('connected');
+        statusIndicator2.classList.add('connected');
+        return true;
+      } catch (error) {
+        return false;
+      }
+    }
+    
+    checkServer();
+    
+    function showResult(message, isSuccess) {
+      resultDiv.textContent = message;
+      resultDiv.className = isSuccess ? 'show success' : 'show error';
+      setTimeout(() => {
+        resultDiv.classList.remove('show');
+      }, 5000);
+    }
+    
+    document.getElementById('signupForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const username = document.getElementById('signupUser').value;
+      const password = document.getElementById('signupPass').value;
+      
+      try {
+        const response = await fetch('http://localhost:3000/signup', {
+          method: 'POST',
+          headers: {'Content-Type': 'application/json'},
+          body: JSON.stringify({ username, password })
+        });
+        
+        const data = await response.json();
+        
+        if (response.ok) {
+          showResult(`✅ Success: ${data.message}`, true);
+          document.getElementById('signupForm').reset();
+        } else {
+          showResult(`❌ Error: ${data.error}`, false);
+        }
+      } catch (error) {
+        showResult(`❌ Connection Error: Is your server running? (npm start)`, false);
+      }
+    });
+    
+    document.getElementById('loginForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const username = document.getElementById('loginUser').value;
+      const password = document.getElementById('loginPass').value;
+      
+      try {
+        const response = await fetch('http://localhost:3000/login', {
+          method: 'POST',
+          headers: {'Content-Type': 'application/json'},
+          body: JSON.stringify({ username, password })
+        });
+        
+        const data = await response.json();
+        
+        if (response.ok) {
+          showResult(`✅ Success: ${data.message}`, true);
+          document.getElementById('loginForm').reset();
+        } else {
+          showResult(`❌ Error: ${data.error}`, false);
+        }
+      } catch (error) {
+        showResult(`❌ Connection Error: Is your server running? (npm start)`, false);
+      }
+    });
+  </script>
+</body>
+</html>
+
